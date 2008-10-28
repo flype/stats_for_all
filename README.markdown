@@ -2,14 +2,14 @@
 
 StatsForAll gives you a simple way to track all the stats you need from your models.
 
-The plugin was coded with two goals in mind,  be as easier to use as possible and scalable.
+The plugin was coded with two goals in mind:  be as easier to use as possible and very scalable.
 
 ## Requirements
 
   - drb gem
   - demonize gem
 
-  optionally if you want to use starling mode with the queue system you'll need: 
+  Optionally if you want to use starling mode with the queue system you'll need: 
 	- Starling gem
 	- SimplifiedStarling rails plugin  <http://github.com/fesplugas/simplified_starling>
 
@@ -31,13 +31,15 @@ In the model you have to add the  command:
 
 	stats_for_me
 
+for example like this:
+
 	app/models/banner.rb:
 
 	class Banner < ActiveRecord::Base
       stats_for_me
 	end
 
-In the config file you have to specify the model name and the type with de identifier you want to use for all your models with stats:
+In the config file you have to specify the models names and the type with de identifier you want to use for all your models with stats, for example:
 
 	/config/stats_for_all.yml:
 
@@ -51,8 +53,14 @@ That's all to have the basic functionality of the plugging running.
 
 To use it you have to know the new methods of your model, continuing with the banner example used before:
 
-You have now 4 new methods to use in your banner model: add_hit, add_click, hits and clicks.
-We are going to see and example of use of your click type
+You have now 4 new methods to use in your banner model: 
+
+	@banner.add_hit
+	@banner.add_click
+	@banner.hits
+	@banner.clicks
+	
+We are going to see and example of use of your click type.
 	
 We create a banner instance:
 
@@ -61,6 +69,7 @@ We create a banner instance:
 To increase the counter of your types defined in "stats_for_all.yml" you can use:
 
 	Banner.first.add_click
+	=>1
 
 The counter is increased on by one each time you call the add_click method.
 	
@@ -81,7 +90,7 @@ As I said in the beginning of this document, this plugins was coded with two mai
 
 Concerning with scalability the plugin have three working modes: **direct**, **drb** and **starling**.
 
-The **direct mode** use the db directly to increase and regenerate all the stats in each "add_type" call. Because of that this mode it's only recommended to development stages because generate a lot of load in the db.
+The **direct mode** use the db directly to increase and regenerate all the stats in each "add_type" call. Because of that, this mode it's only recommended to development stages because generate a lot of load in the db.
 
 The **drb mode** use a rake task to enable a drb server where all your increments with the "add_type" will be temporally stored while they are waiting to be dump to the db all in one time.
 
