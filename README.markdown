@@ -6,12 +6,12 @@ The plugin was coded with two goals in mind,  be as easier to use as possible an
 
 ## Requirements
 
-  - Ruby >= 1.8.5
   - drb gem
   - demonize gem
-  - optionally if you want to use starling queue system you'll need: 
-		-the starling gem
-		-the rails plugin SimplifiedStarling http://github.com/fesplugas/simplified_starling 
+
+  optionally if you want to use starling mode with the queue system you'll need: 
+	- Starling gem
+	- SimplifiedStarling rails plugin  <http://github.com/fesplugas/simplified_starling>
 
 ## Install
 
@@ -27,7 +27,9 @@ To start using it you have to define the model you want to track, I'm going to u
 
 	ruby script/generate model banner string:url
 	
-In the model you have to add the "stats_for_me":
+In the model you have to add the  command:
+
+	stats_for_me
 
 	app/models/banner.rb:
 
@@ -35,7 +37,7 @@ In the model you have to add the "stats_for_me":
       stats_for_me
 	end
 
-In the config file in /config/stats_for_all.yml you have to specify the model name and the type with de identifier you want to use for all your models with stats:
+In the config file you have to specify the model name and the type with de identifier you want to use for all your models with stats:
 
 	/config/stats_for_all.yml:
 
@@ -95,7 +97,7 @@ In the configuration file you can specify which one of this methods use in each 
 
 	  types: { click: 0, hit: 1}
 
-	  # no need if you work in "simple" increment mode only
+	  # no need if you work in "direct mode" only
 	  server_host: localhost
 	  server_port: 9000
 	  dump_frequency_in_seconds: 600
@@ -123,16 +125,41 @@ To run in foreground in the terminal
 
 	rake stats_for_all:run
 	
+If you want to run in starling mode you can use the rake task provided by the simplified_starling plugin to run and stop the queue and the queue processor, remember:
+	
+To run the processor and the starling queue:
+	
+	rake simplified_starling:start_and_process_jobs 
+	
+To stop both:
+	
+	rake simplified_starling:stop
+	rake simplified_starling:stop_processing_jobs 
+	
+More info about simplified_starling plugin in their own repository <http://github.com/fesplugas/simplified_starling>
 
 ## Known issues
 
+Can't run in sqlite.
+
+Nowadays the drb services have a limited number of connections  that may create a bottle neck in your app, because of that I'm planning to support multiple instances of the drb server running at the same time with a system to balance the load to each drb server. By the moment, I think that the starling queue system can normalize the high load peaks.
   
 ## Running plugin tests
 
+You have to go to the test folder in the plugin and run rake, you will need to have installed the factory-girl plugin and the shoulda testings kits.
 
 ## TODO
 
+Test it in different rails version, by the moment tested in 2.1.1
+Prepare the multi-drb server support to fight with high load peaks of requests.
+Prepare some benchmark about the number of petition supported in each mode.
 
-## Special Thanks
+## Thanks
+
+Guillermo Álvarez for some ideas and inspiration about the design.
+
+## :-)
+
+Please, tell me your experiences, problem, suggestion to improve any aspect of it.
 
 Copyright (c) 2008 [Felipe Talavera Armero <felipe@n2kp3.com>], released under the MIT license
