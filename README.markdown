@@ -30,7 +30,7 @@ In the model you have to add the "stats_for_me":
 app/models/banner.rb:
 
 	class Banner < ActiveRecord::Base
-  	stats_for_me
+      stats_for_me
 	end
 
 In the config file in /config/stats_for_all.yml you have to specify the model name and the type with de identifier you want to use for all your models with stats:
@@ -38,8 +38,8 @@ In the config file in /config/stats_for_all.yml you have to specify the model na
 /config/stats_for_all.yml:
 
 	all:
-  	model: [ banner ]
-  	types: { click: 0, hit: 1}
+     model: [ banner ]
+  	 types: { click: 0, hit: 1}
 
 That's all to have the basic functionality of the plugging running.
 
@@ -51,22 +51,26 @@ You have now 4 new methods to use in your banner model: add_hit, add_click, hits
 We are going to see and example of use of your click type
 	
 We create a banner instance:
+
 	Banner.create(:url =>"http://github.com")
 	
 To increase the counter of your types defined in stats_for_all.yml you can use:
+
 	Banner.first.add_click
+
 The counter is increased on by one each time you call the add_click method.
 	
 To get any stats saved before you can use this syntax, and you will get the 24, 31, 12 vector with all your stats depending on your request.
+	
 	Banner.first.clicks :day => 28, :month => 10, :year => 2008
   Banner.first.clicks :day => 21, :month =>10, :year => 2008
   Banner.first.clicks :month =>10, :year => 2008
   Banner.first.clicks :year => 2008
 		
 Also you can specify, ranges of time to get more than one vector at time.
+
   Banner.first.clicks :day => 21..24, :month =>10..12, :year => 2007..2009
 
-##
 
 ## Known issues
 
