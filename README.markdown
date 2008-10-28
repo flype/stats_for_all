@@ -9,7 +9,7 @@ The plugin was coded with two goals in mind,  be as easier to use as possible an
   - Ruby >= 1.8.5
   - drb gem
   - demonize gem
-  - optionally if you want to use starling queue system you'll need the rails plugin simplified_starling http://github.com/fesplugas/simplified_starling 
+  - optionally if you want to use starling queue system you'll need the rails plugin SimplifiedStarling http://github.com/fesplugas/simplified_starling 
 
 ## Install
 
@@ -63,8 +63,11 @@ The counter is increased on by one each time you call the add_click method.
 To get any stats saved before you can use this syntax, and you will get the 24, 31, 12 vector with all your stats depending on your request.
 	
 	Banner.first.clicks :day => 28, :month => 10, :year => 2008
+	
   Banner.first.clicks :day => 21, :month =>10, :year => 2008
+
   Banner.first.clicks :month =>10, :year => 2008
+
   Banner.first.clicks :year => 2008
 		
 Also you can specify, ranges of time to get more than one vector at time.
