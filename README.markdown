@@ -167,6 +167,8 @@ You have to go to the test folder in the plugin and run rake, you will need to h
 
 ## TODO
 
+Add ACL to the drb server.
+
 Test it in different rails version, by the moment tested in 2.1.1.
 
 Prepare the multi-drb server support to fight with high load peaks of requests.
