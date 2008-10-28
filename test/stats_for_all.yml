@@ -1,0 +1,18 @@
+all:
+  model: [ banner ]
+  
+  types: { click: 0, hit: 1 }
+  
+  # require for increment_type: drb and starling only
+  server_host: localhost
+  server_port: 9000
+  dump_frequency_in_seconds: 2
+
+development:
+  increment_type: drb #drb, direct, starling
+
+production:
+  increment_type: starling
+
+test:
+  increment_type: direct
