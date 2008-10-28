@@ -79,7 +79,7 @@ Also you can specify, ranges of time to get more than one vector at time.
 
 As I said in the beginning of this document, this plugins was coded with two main goals, be easy to use, as you have seen in the basic usage example and scalability.
 
-Concerning with scalability the plugin have three working modes: direct, drb and starling.
+Concerning with scalability the plugin have three working modes: **direct**, **drb** and **starling**.
 
 The **direct mode** use the db directly to increase and regenerate all the stats in each "add_type" call. Because of that this mode it's only recommended to development stages because generate a lot of load in the db.
 
