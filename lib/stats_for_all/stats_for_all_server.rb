@@ -21,7 +21,7 @@ class StatsForAllServer
   end
 
   def save_all
-    print # only for debugging              
+    log_dump              
     @@object_pool.each do |key, value|
       @@object_pool.delete(key) if stat=Stat.find(key) 
       stat.data=Marshal.dump(value.add(stat.to_a))
@@ -37,9 +37,9 @@ class StatsForAllServer
   end
 
   private
-  def print
-    puts "dumping data to the db"
-    puts @@object_pool.to_yaml
-    puts @@object_pool.empty?
+  def log_dump
+    puts "#{Time.now} - Dumping all data to the db."
+    # puts @@object_pool.to_yaml
+    # puts @@object_pool.empty?
   end
 end

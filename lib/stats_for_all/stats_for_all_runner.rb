@@ -18,7 +18,6 @@ class StatsForAllRunner
     client_server.loop_process
     DRb.stop_service
     # DRb.thread.join
-
   end
 end
 
