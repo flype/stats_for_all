@@ -63,16 +63,13 @@ The counter is increased on by one each time you call the add_click method.
 To get any stats saved before you can use this syntax, and you will get the 24, 31, 12 vector with all your stats depending on your request.
 	
 	Banner.first.clicks :day => 28, :month => 10, :year => 2008
-	
-  Banner.first.clicks :day => 21, :month =>10, :year => 2008
-
-  Banner.first.clicks :month =>10, :year => 2008
-
-  Banner.first.clicks :year => 2008
+	Banner.first.clicks :day => 21, :month =>10, :year => 2008
+	Banner.first.clicks :month =>10, :year => 2008
+	Banner.first.clicks :year => 2008
 		
 Also you can specify, ranges of time to get more than one vector at time.
 
-  Banner.first.clicks :day => 21..24, :month =>10..12, :year => 2007..2009
+	Banner.first.clicks :day => 21..24, :month =>10..12, :year => 2007..2009
 
 
 ## Known issues
