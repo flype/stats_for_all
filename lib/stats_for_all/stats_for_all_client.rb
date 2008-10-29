@@ -76,7 +76,6 @@ module StatsForAll
       end
       
       def drb_save(type, hour=Time.now.hour)
-        DRb.start_service
         stats_server = DRbObject.new(nil, "druby://#{StatsForAll::CONFIGURATION["server_host"]}:#{StatsForAll::CONFIGURATION["server_port"]}")
         value=stats_server.increment(load_stats(type), Time.now.hour)                
         DRb.stop_service
