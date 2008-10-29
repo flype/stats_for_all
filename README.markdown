@@ -90,7 +90,8 @@ To get any stats saved before you can use this syntax, and you will get the 24, 
 Also you can specify, ranges of time to get more than one vector at time.
 
 	Banner.first.clicks :day => 21..24, :month =>10..12, :year => 2007..2009
-	=> [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]]
+	=> [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0], 
+	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]]
 	
 ## Scalability features
 
@@ -154,6 +155,26 @@ To stop both:
 	rake simplified_starling:stop_processing_jobs 
 	
 More info about simplified_starling plugin in their own repository <http://github.com/fesplugas/simplified_starling>
+
+## Benchmark
+
+Finally, I have made some benchmark of the implementation:
+
+	mode-number         user     system      total        real
+	direct-10        0.090000   0.010000   0.100000 (  0.159613)
+	direct-100       0.910000   0.060000   0.970000 (  1.560477)
+	direct-1000      8.830000   0.580000   9.410000 ( 15.582841)
+	direct-10000    86.100000   5.830000  91.930000 (161.467011)
+	drb-10           0.010000   0.000000   0.010000 (  0.027090)
+	drb-100          0.130000   0.010000   0.140000 (  0.244915)
+	drb-1000         1.570000   0.110000   1.680000 (  3.055996)
+	drb-10000       15.420000   0.980000  16.400000 ( 28.404083)
+	starling-10      0.010000   0.000000   0.010000 (  0.006791)
+	starling-100     0.010000   0.010000   0.020000 (  0.035332)
+	starling-1000    0.120000   0.040000   0.160000 (  0.384227)
+	starling-10000   1.420000   0.340000   1.760000 (  4.374145)
+
+As you can see there is some big performance diferences depending of the mode chosen.
 
 ## Known issues
 
