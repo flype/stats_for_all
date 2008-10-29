@@ -7,6 +7,7 @@ class CreateStatsForAll < ActiveRecord::Migration
       t.text    "data"
       t.timestamps
     end
+    execute "ALTER TABLE stats CHANGE COLUMN data data BLOB"
   end
 
   def self.down

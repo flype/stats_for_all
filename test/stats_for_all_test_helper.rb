@@ -23,8 +23,6 @@ ActiveRecord::Base.establish_connection(YAML.load_file(File.expand_path(File.dir
 ActiveRecord::Base.send(:include, StatsForAll::Client)
 
 
-
-
 def setup_db
   ActiveRecord::Schema.define(:version => 1) do
     create_table "banners", :force => true do |t|
@@ -48,6 +46,8 @@ def setup_db
       t.datetime "created_at"
       t.datetime "updated_at"
     end
+    execute "ALTER TABLE stats CHANGE COLUMN data data BLOB"
+    
   end
 end
 
