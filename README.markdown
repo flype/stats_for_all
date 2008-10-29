@@ -156,7 +156,7 @@ To stop both:
 	
 More info about simplified_starling plugin in their own repository <http://github.com/fesplugas/simplified_starling>
 
-## Benchmark
+## Benchmarks
 
 Finally, I have made some benchmark of the implementation:
 
@@ -174,7 +174,7 @@ Finally, I have made some benchmark of the implementation:
 	starling-1000    0.120000   0.040000   0.160000 (  0.384227)
 	starling-10000   1.420000   0.340000   1.760000 (  4.374145)
 
-As you can see there is some big performance diferences depending of the mode chosen.
+As you can see there is some big performance diferences between each mode.
 
 ## Known issues
 
