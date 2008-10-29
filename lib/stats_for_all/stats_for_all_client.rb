@@ -28,10 +28,13 @@ module StatsForAll
       end
 
       StatsForAll::CONFIGURATION["types"].each do |type, value|
-        define_method( :"#{type.pluralize}") do |args|
-          args||={}
-          args[:type]=value
-          self.stat(args)
+
+        define_method( :"#{type.pluralize}") do |*args|
+          args=args.first
+          args ||= {} 
+          raise(ArgumentError, "wrong number of arguments 3 is the maximum.") if args.size > 3
+          args.merge! :type => value
+          self.stat( args )
         end 
         
         define_method(:"add_#{type}") do
