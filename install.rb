@@ -11,3 +11,7 @@ FileUtils.cp File.dirname(__FILE__) + '/templates/create_stats_for_all.rb', migr
 
 puts IO.read(File.join(File.dirname(__FILE__), 'README.markdown'))
 
+puts "##########################################################################################"
+puts "###  Check the configuration file in /config/stats_for_all.yml"
+puts "###  Run the migration ( rake db:migrate ) to create the new table to store stats"
+puts "##########################################################################################"

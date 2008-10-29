@@ -38,6 +38,56 @@ class BannerTest < Test::Unit::TestCase
       
     end
     
+    context "A banner with a day of stats" do
+      setup do
+        @data=Array.new(24,0)
+        @day=4
+        5.times do
+          @data[@day]=10
+          @day+=1
+        end
+        @art=Factory(:banner)
+        @stat1=Factory(:stat, :model_id => @art.id, :data => Marshal.dump(@data), :day=> Time.now.day, :month=> Time.now.month, :year => Time.now.year )
+        @stat1.update_all_stats
+      end
+
+      should "return some correct stats" do
+        assert_equal 24, @art.stat( :day=> Time.now.day, :month=> Time.now.month, :year => Time.now.year, :type =>1).size
+        assert_equal 31, @art.stat( :month=> Time.now.month, :year => Time.now.year, :type =>1).size
+        assert_equal 12, @art.stat( :type =>1).size
+
+        assert_equal 10, @art.stat( :day=> Time.now.day, :month=> Time.now.month, :year => Time.now.year, :type =>1)[@day-1]
+        assert_equal 50, @art.stat( :month=> Time.now.month, :year => Time.now.year, :type =>1)[Time.now.day-1]
+        assert_equal 50, @art.stat( :type =>1)[Time.now.month-1]
+      end
+    end
+
+    context "A banner with some days of stats" do
+      setup do
+        @data=Array.new(24,0)
+        @day=4
+        5.times do
+          @data[@day]=10
+          @day+=1
+        end
+        @art=Factory(:banner)
+        @stat1=Factory(:stat, :model_id => @art.id, :data => Marshal.dump(@data), :day=> Time.now.day, :month=> Time.now.month, :year => Time.now.year )
+        @stat1.update_all_stats
+        @stat2=Factory(:stat, :model_id => @art.id, :data => Marshal.dump(@data), :day=> (Time.now.day+1), :month=> Time.now.month, :year => Time.now.year )
+        @stat2.update_all_stats
+      end
+
+      should "return some correct stats" do
+        assert_equal 2, @art.stat( :day=> Time.now.day..Time.now.day+1, :month=> Time.now.month, :year => Time.now.year, :type =>1).size
+        assert_equal 100, @art.stat( :day=> Time.now.day..Time.now.day+1, :month=> Time.now.month, :year => Time.now.year, :type =>1).flatten.sum
+        assert_equal 10, @art.stat( :day=> Time.now.day, :month=> Time.now.month, :year => Time.now.year, :type =>1)[@day-1]
+        assert_equal 50, @art.stat( :day=> Time.now.day, :month=> Time.now.month, :year => Time.now.year, :type =>1).sum
+        assert_equal 50, @art.stat( :month=> Time.now.month, :year => Time.now.year, :type =>1)[Time.now.day-1]
+        assert_equal 100, @art.stat( :month=> Time.now.month, :year => Time.now.year, :type =>1).sum
+        assert_equal 100, @art.stat( :type =>1)[Time.now.month-1]
+      end
+    end
+    
     should "work with the drb mode" do
       StatsForAll::CONFIGURATION["increment_type"]="drb"
       assert_equal "drb", StatsForAll::CONFIGURATION["increment_type"]

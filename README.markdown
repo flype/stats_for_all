@@ -18,6 +18,10 @@ The plugin was coded with two goals in mind:  be as easier to use as possible an
 In the root directory of your project:
 
 	script/plugin install git://github.com/flype/stats_for_all.git
+	
+The install script will create a configuration file in /config and one migration, remember to run the migration:
+
+	rake db:migrate
 
 The installation script will create for you the stats_for_all.yml file in the /config directory of your project where you'll be able to setup all the configuration options Also the installation script will create the migration file to store the stats generated.
 
