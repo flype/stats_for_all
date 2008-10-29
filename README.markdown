@@ -194,8 +194,6 @@ Test it in different rails version, by the moment tested in 2.1.1.
 
 Prepare the multi-drb server support to fight with high load peaks of requests.
 
-Prepare some benchmark about the number of petition supported in each mode.
-
 ## Thanks
 
 Guillermo Álvarez - for some ideas and inspiration about the design.
