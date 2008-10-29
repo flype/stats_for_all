@@ -8,9 +8,18 @@ class CreateStatsForAll < ActiveRecord::Migration
       t.timestamps
     end
     execute "ALTER TABLE stats CHANGE COLUMN data data BLOB"
+    add_index :stats, [:day], :name =>"idx_stats_day"
+    add_index :stats, [:month], :name =>"idx_stats_month"
+    add_index :stats, [:year], :name =>"idx_stats_year"    
+    add_index :stats, [:stat_type], :name =>"idx_stats_stat_type"    
   end
 
   def self.down
     drop_table :stats
+    
+    remove_index :stats,  :name =>"idx_stats_day"
+    remove_index :stats,  :name =>"idx_stats_month"
+    remove_index :stats,  :name =>"idx_stats_year"
+    remove_index :stats,  :name =>"idx_stats_stat_type"
   end
 end

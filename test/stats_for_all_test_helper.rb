@@ -8,10 +8,6 @@ require 'yaml'
 require 'shoulda/rails'
 require 'factory_girl'
 
-# require 'starling'
-# require 'simplified_starling'
-# require 'simplified_starling/active_record'
-
 module StatsForAll
   RAILS_ENV='test'
 end
