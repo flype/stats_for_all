@@ -6,6 +6,8 @@ class BannerTest < Test::Unit::TestCase
     setup_db
   end
   
+  
+  
   context "A stats_for_all_client" do
     setup do
       @data=Array.new(24,0)
