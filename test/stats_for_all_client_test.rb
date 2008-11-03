@@ -6,8 +6,6 @@ class BannerTest < Test::Unit::TestCase
     setup_db
   end
   
-  
-  
   context "A stats_for_all_client" do
     setup do
       @data=Array.new(24,0)
@@ -30,14 +28,13 @@ class BannerTest < Test::Unit::TestCase
       assert_equal 24, @art.clicks(:day => Time.now.day, :month => Time.now.month, :year => Time.now.year).size
       assert_equal 4, @art.clicks(:day => Time.now.day, :month => Time.now.month, :year => Time.now.year).sum
 
-      assert_equal 31, @art.clicks(:month => Time.now.month, :year => Time.now.year).size
+      assert_equal Time.days_in_month(Time.now.month), @art.clicks(:month => Time.now.month, :year => Time.now.year).size
       assert_equal 4, @art.clicks( :month => Time.now.month, :year => Time.now.year).sum
 
       assert_equal 12, @art.clicks(:year => Time.now.year).size
       assert_equal 4, @art.clicks( :year => Time.now.year).sum      
       
-      assert_equal 12, @art.clicks.size
-      
+      assert_equal 12, @art.clicks.size      
     end
     
     context "A banner with a day of stats" do
@@ -55,7 +52,7 @@ class BannerTest < Test::Unit::TestCase
 
       should "return some correct stats" do
         assert_equal 24, @art.stat( :day=> Time.now.day, :month=> Time.now.month, :year => Time.now.year, :type =>1).size
-        assert_equal 31, @art.stat( :month=> Time.now.month, :year => Time.now.year, :type =>1).size
+        assert_equal Time.days_in_month(Time.now.month), @art.stat( :month=> Time.now.month, :year => Time.now.year, :type =>1).size
         assert_equal 12, @art.stat( :type =>1).size
 
         assert_equal 10, @art.stat( :day=> Time.now.day, :month=> Time.now.month, :year => Time.now.year, :type =>1)[@day-1]
@@ -63,6 +60,46 @@ class BannerTest < Test::Unit::TestCase
         assert_equal 50, @art.stat( :type =>1)[Time.now.month-1]
       end
     end
+    
+    context "A banner" do
+      setup do
+        @art1=Factory(:banner)
+        @art1.add_click
+        @art1.add_hit
+                
+        # @art1.stats.each {|a| a.update_all_stats }
+        
+        @art2=Factory(:banner)               
+        @art2.add_hit
+        @art2_result=[{:type=>["hit"], :day=>Time.now.day, :month=>Time.now.month, :year=>Time.now.year}]
+        @art2.stats.first.update_all_stats
+        
+        StatsForAll::CONFIGURATION["increment_type"]="direct"
+
+      end
+
+      should "have the correct available months, days and years in the correct format" do
+        assert_equal 2, @art1.available_days.size 
+        assert_equal 2, @art1.available_years.size
+        assert_equal 2, @art1.available_months.size 
+
+        assert_equal 1, @art1.available_days.group_by_types.size 
+        assert_equal 1, @art1.available_years.group_by_types.size 
+        assert_equal 1, @art1.available_months.group_by_types.size 
+        
+        assert_equal 1, @art2.available_days.size 
+        assert_equal 1, @art2.available_months.size 
+        assert_equal 1, @art2.available_years.size 
+    
+        assert_equal @art2_result, @art2.available_days
+      end
+      
+      should "be able to get the data arrays from the multi_stats method" do
+        assert_equal 1, @art2.multi_stats(@art2.available_days.group_by_types[0]).size
+        assert_equal 2, @art1.multi_stats(@art1.available_days.group_by_types[0]).size
+      end
+    end
+    
 
     context "A banner with some days of stats" do
       setup do
@@ -112,7 +149,7 @@ class BannerTest < Test::Unit::TestCase
       assert_equal 24, @art.hits(:day => Time.now.day, :month => Time.now.month, :year => Time.now.year).size
       assert_equal 4, @art.hits(:day => Time.now.day, :month => Time.now.month, :year => Time.now.year).sum
 
-      assert_equal 31, @art.hits(:month => Time.now.month, :year => Time.now.year).size
+      assert_equal Time.days_in_month(Time.now.month), @art.hits(:month => Time.now.month, :year => Time.now.year).size
       assert_equal 4, @art.hits( :month => Time.now.month, :year => Time.now.year).sum
 
       assert_equal 12, @art.hits(:year => Time.now.year).size

@@ -21,12 +21,14 @@ class Stat < ActiveRecord::Base
   StatsForAll::CONFIGURATION["model"].each do | model |
     self.class_eval("belongs_to :#{model.downcase.singularize} , :polymorphic => true")
   end
-    
+      
   named_scope :is_like, lambda { |*args| {:conditions => { :stat_type => args.first.stat_type, 
                                                            :model_type => args.first.model_type,
                                                            :model_id => args.first.model_id } } }
 
   named_scope :stats_type, lambda { |*args| {:conditions => {:stat_type => args.first } } } 
+  
+  named_scope :type_only, lambda { |*args| {:conditions => { :stat_type => StatsForAll::CONFIGURATION["types"].values_at(args.first).first } } } 
     
   named_scope :today, :conditions => { :day => Time.now.day,
                                        :month => Time.now.month,
@@ -35,11 +37,12 @@ class Stat < ActiveRecord::Base
   named_scope :day, lambda { |*args| {:conditions => { :day => (args.first or 0) } } }
   named_scope :month, lambda { |*args| {:conditions => { :month => (args.first or 0)} } }
   named_scope :year, lambda { |*args| {:conditions => { :year => (args.first or Time.now.year ) } } }
+
   
+  named_scope :day_only, lambda { |*args| {:conditions => ['day != 0 and month !=0 and year !=0'] } }
   
   named_scope :month_only, lambda { |*args| {:conditions => { :month => (args.first or Time.now.month),
-                                                              :day => 0,
-                                                              :year => Time.now.year } } }
+                                                              :day => 0} } }
                                                                                                                         
   named_scope :year_only, lambda { |*args| {:conditions => { :year => (args.first or Time.now.year),
                                                              :day => 0,
@@ -49,6 +52,10 @@ class Stat < ActiveRecord::Base
     Marshal.load(data)
   end
   
+  def type
+    StatsForAll::CONFIGURATION["types"].index(self.stat_type)
+  end
+    
   def model
     klass = self.model_type.capitalize.constantize
     klass.find(self.model_id)

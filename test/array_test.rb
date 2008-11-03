@@ -17,4 +17,30 @@ class ArrayTest < Test::Unit::TestCase
     end
   end
 
+
+  def test_should_check_that_group_by_types_is_working
+    a=[{:type=>["click"], :day=>29, :month=>10, :year=>2008},
+       {:type=>["hit"], :day=>29, :month=>10, :year=>2008},
+       {:type=>["hit"], :day=>30, :month=>10, :year=>2008}]
+
+    b=[{:type=>["click", "hit"], :day=>29, :month=>10, :year=>2008}, 
+       {:type=>["hit"], :day=>30, :month=>10, :year=>2008}]
+
+    assert_equal a.group_by_types, b
+
+    a=[{:type=>["click"], :day=>29, :month=>10, :year=>2008},
+       {:type=>["hit"], :day=>29, :month=>10, :year=>2008},
+       {:type=>["hit"], :day=>30, :month=>10, :year=>2008},
+       {:type=>["click"], :day=>30, :month=>10, :year=>2008},
+       {:type=>["hit"], :day=>27, :month=>8, :year=>2007},
+       {:type=>["click"], :day=>27, :month=>8, :year=>2007}]
+
+    b=[{:type=>["click", "hit"], :day=>29, :month=>10, :year=>2008}, 
+       {:type=>["hit", "click"], :day=>30, :month=>10, :year=>2008},
+       {:type=>["hit", "click"], :day=>27, :month=>8, :year=>2007}]
+
+    assert_equal a.group_by_types, b
+    
+  end
+
 end

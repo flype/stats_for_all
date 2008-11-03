@@ -3,7 +3,8 @@ all:
   
   types: { click: 0, hit: 1}
   
-  # no need if you work in "direct mode" only  server_host: localhost
+  # no need if you work in "direct mode" only  
+  server_host: localhost
   server_port: 9000
   dump_frequency_in_seconds: 600
 
