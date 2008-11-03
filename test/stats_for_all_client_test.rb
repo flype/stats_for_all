@@ -95,8 +95,8 @@ class BannerTest < Test::Unit::TestCase
       end
       
       should "be able to get the data arrays from the multi_stats method" do
-        assert_equal 1, @art2.multi_stats(@art2.available_days.group_by_types[0]).size
-        assert_equal 2, @art1.multi_stats(@art1.available_days.group_by_types[0]).size
+        assert_equal 1, @art2.available_days(:direct => true, :group => true).size
+        assert_equal 2, @art1.available_days(:direct => true).size
       end
     end
     

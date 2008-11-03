@@ -37,14 +37,11 @@ class Stat < ActiveRecord::Base
   named_scope :day, lambda { |*args| {:conditions => { :day => (args.first or 0) } } }
   named_scope :month, lambda { |*args| {:conditions => { :month => (args.first or 0)} } }
   named_scope :year, lambda { |*args| {:conditions => { :year => (args.first or Time.now.year ) } } }
-
   
   named_scope :days_only, :conditions => ['day != 0 and month !=0 and year !=0'] 
   named_scope :months_only, :conditions => ['day = 0 and month !=0 '] 
   named_scope :years_only, :conditions => ['day = 0 and month =0 and year !=0']
 
-
-  
   named_scope :month_only, lambda { |*args| {:conditions => { :month => (args.first or Time.now.month),
                                                               :day => 0} } }
                                                                                                                         
