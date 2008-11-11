@@ -72,11 +72,13 @@ module StatsForAll
 
       def multi_stats(arg={})
         raise(ArgumentError, "wrong number of arguments 1 is the minimun.") if arg.size == 0
-        raise(ArgumentError, ":type must be an array of types") if arg[:type].size == 0
+        raise(ArgumentError, ":type must be an array of types") unless arg[:type]
         arg.to_yaml
         stats_hash={}
         arg[:type].each do |type|
-          stats.day(arg[:day]).month(arg[:month]).year(arg[:year]).stats_type(StatsForAll::CONFIGURATION["types"][type]).each do |stat| 
+          my_stats=stats.day(arg[:day]).month(arg[:month]).year(arg[:year]).stats_type(StatsForAll::CONFIGURATION["types"][type])
+          stats_hash.merge!(Hash[type, []]) if my_stats.instance_of?(Array)
+          my_stats.each do |stat| 
             stats_hash.merge!(Hash[type, stat.to_a])
           end
         end
