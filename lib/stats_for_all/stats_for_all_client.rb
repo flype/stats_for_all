@@ -94,7 +94,7 @@ module StatsForAll
       #    {:type=>["hit"], :day=>21, :month=>10, :year=>2008} ]
       #
       # Using the array method group_by_types
-      # @object.available_days.group_by_types
+      # @object.available_days  :group => true
       # => [{:type=>["click", "hit"], :day=>29, :month=>10, :year=>2008}, {:type=>["hit"], :day=>30, :month=>10, :year=>2008}]
       #
       # You can use some optional params like:
@@ -112,15 +112,15 @@ module StatsForAll
 
       # Method prepared to retrieve easily all the stats data stored
       #
-      # @object.available_days("click") or 
-      # @object.available_days
+      # @object.available_monhts("click") or 
+      # @object.available_monhts
       # =>[ {:type=>["click"], :day=>0, :month=>10, :year=>2008}, 
       #    {:type=>["hit"], :day=>0, :month=>10, :year=>2008},
       #    {:type=>["hit"], :day=>0, :month=>10, :year=>2008} ]
       #
       # using the array method group_by_types
-      # @object.available_days.group_by_types
-      # => [{:type=>["click", "hit"], :day=>29, :month=>10, :year=>2008}, {:type=>["hit"], :day=>30, :month=>10, :year=>2008}]
+      # @object.available_monhts :group => true
+      # => [{:type=>["click", "hit"], :day=>0, :month=>10, :year=>2008}, {:type=>["hit"], :day=>0, :month=>11, :year=>2008}]
       #
       # You can use some optional params like:
       # ":group => true" to group by type the stats, a more compact way to retrieve the stats
@@ -136,20 +136,19 @@ module StatsForAll
       
       # Method prepared to retrieve easily all the stats data stored
       #
-      # @object.available_days("click") or 
-      # @object.available_days
+      # @object.available_years("click") or 
+      # @object.available_years
       # =>[ {:type=>["click"], :day=>0, :month=>0, :year=>2008}, 
       #    {:type=>["hit"], :day=>0, :month=>0, :year=>2008},
       #    {:type=>["hit"], :day=>0, :month=>0, :year=>2008} ]
       #
       # using the array method group_by_types
-      # @object.available_days.group_by_types
-      # => [{:type=>["click", "hit"], :day=>29, :month=>10, :year=>2008}, {:type=>["hit"], :day=>30, :month=>10, :year=>2008}]
+      # @object.available_years  :group => true
+      # => [{:type=>["click", "hit"], :day=>0, :month=>0, :year=>2008}, {:type=>["hit"], :day=>0, :month=>0, :year=>2009}]
       #
       # You can use some optional params like:
       # ":group => true" to group by type the stats, a more compact way to retrieve the stats
       # ":direct => true" to get directly the data stats arrays
-      # ":year => 2008" to specify directly more concrects dates
       # @object.available_days :group => true, :direct => true
       
       def available_years(arg={})
@@ -159,6 +158,7 @@ module StatsForAll
       
       private
       
+      # this method prepare the output format of the available_* methods.
       def prepare_stat_data(st, arg)
         hashes=st.map do |stat| 
           Hash[ :day, stat.day, :month, stat.month, :year , stat.year, :type, [stat.type]] 

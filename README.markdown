@@ -71,8 +71,8 @@ We create a banner instance:
 	Banner.create(:url =>"http://github.com")
 	
 To increase the counter of your types defined in "stats_for_all.yml" you can use:
-
-	Banner.first.add_click
+	@ban=Banner.first
+	@ban.add_click
 	=>1
 
 The counter is increased on by one each time you call the add_click method.
@@ -81,29 +81,105 @@ To get the stats array calculated, you can use this syntax, and you will get the
 
 Imagine that we added the click the day 28 of  october of 2008 and we want to recover the stats for that day:
 	
-	Banner.first.clicks :day => 28, :month => 10, :year => 2008
+	@ban.clicks :day => 28, :month => 10, :year => 2008
 	=> [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]
 
 or other day of the same month, that doesn't have data:	
 
-	Banner.first.clicks :day => 21, :month =>10, :year => 2008
+	@ban.clicks :day => 21, :month =>10, :year => 2008
 	=> []
 
 or all the october month:
 
-	Banner.first.clicks :month =>10, :year => 2008
+	@ban.clicks :month =>10, :year => 2008
 	=> [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]
 
 or the stats for the twelve months:
 
-	Banner.first.clicks :year => 2008
+	@ban.clicks :year => 2008
 	=> [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]
 		
 Also you can specify, ranges of time to get more than one vector at time.
 
-	Banner.first.clicks :day => 21..24, :month =>10..12, :year => 2007..2009
+	@ban.clicks :day => 21..24, :month =>10..12, :year => 2007..2009
 	=> [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0], 
 	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]]
+	
+You have some additional method to retrieve your stats in a more flexible way.
+
+The methods available* are prepared to inform you about the stats that you stored on the database.
+
+There are 3 available* methods:
+
+ 	@ban.available_days
+ 	=>[ {:type=>["click"], :day=>29, :month=>10, :year=>2008}, 
+    {:type=>["hit"], :day=>29, :month=>10, :year=>2008},
+    {:type=>["hit"], :day=>30, :month=>10, :year=>2008} ]
+
+You can use some optional params like:
+
+":group => true" to group by type the stats, a more compact way to retrieve the stats
+
+":direct => true" to get directly the data stats arrays
+
+":month => 10, :year => 2008" to specify directly more concrects dates
+
+	@ban.available_days :group => true
+	=> [ {:type=>["click", "hit"], :day=>29, :month=>10, :year=>2008},
+	 		{:type=>["hit"], :day=>30, :month=>10, :year=>2008} ]
+
+ 	@ban.available_days :group => true, :direct => true, :year => 2008, :month => 10
+
+Another one:
+
+ 	@ban.available_months
+ 	=>[ {:type=>["click"], :day=>0, :month=>10, :year=>2008}, 
+    {:type=>["hit"], :day=>0, :month=>10, :year=>2008},
+    {:type=>["hit"], :day=>0, :month=>10, :year=>2008} ]
+
+You can use some optional params like:
+
+":group => true" to group by type the stats, a more compact way to retrieve the stats
+
+":direct => true" to get directly the data stats arrays
+
+":year => 2008" to specify directly more concrects dates
+
+
+	@ban.available_months :group => true
+	=> [ {:type=>["click", "hit"], :day=>0, :month=>10, :year=>2008},
+	 		{:type=>["hit"], :day=>0, :month=>10, :year=>2008} ]
+
+ 	@ban.available_months :group => true, :direct => true, :year => 2008
+
+
+And the last one:
+
+ 	@ban.available_years
+ 	=>[ {:type=>["click"], :day=>0, :month=>0, :year=>2008}, 
+    {:type=>["hit"], :day=>0, :month=>0, :year=>2008},
+    {:type=>["hit"], :day=>0, :month=>0, :year=>2009} ]
+
+You can use some optional params like:
+
+":group => true" to group by type the stats, a more compact way to retrieve the stats
+
+":direct => true" to get directly the data stats arrays
+
+	@ban.available_years :group => true
+	=> [ {:type=>["click", "hit"], :day=>0, :month=>0, :year=>2008},
+	 		{:type=>["hit"], :day=>0, :month=>0, :year=>2008} ]
+
+ 	@ban.available_years :group => true, :direct => true
+
+
+There is also an additional method that retrieve the stats taking directly the output syntax of available* methods
+
+	@ban.multi_stats(:year => 2008, :month => 10, :day => 29, :type => ["hit", "click"])
+	or @ban.multi_stats(@object.available_days(:group => true))
+	=> {"hit"=>[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0],
+    	"click"=>[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0]}
+
 	
 ## Scalability features
 
