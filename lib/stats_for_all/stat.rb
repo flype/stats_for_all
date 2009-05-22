@@ -91,12 +91,38 @@ class Stat < ActiveRecord::Base
   end
 
   after_create :initializer  
-  protected      
+  after_save :update_counters
+  
+  protected        
+  def update_counters                    
+    # hack hack hack hack we need to change the way to configure the plugin
+    type_name = StatsForAll::CONFIGURATION["types"].keys.reverse[self.stat_type.to_i]
+    if model.attribute_present?("#{type_name}_counter")                       
+      all_stat = Stat.is_like(self).years_only.map(&:to_a).map(&:sum).sum
+      model.update_attribute("#{type_name}_counter", all_stat)
+    end
+  end
+  
   def initializer
-    self.data=Marshal.dump(Array.new(24,0)) if self.data.nil?
-    self.day=Time.now.day if self.day.nil?
-    self.month=Time.now.month if self.month.nil?
-    self.year=Time.now.year if self.year.nil?
+    self.data = Marshal.dump(Array.new(24,0)) if self.data.nil?
+    self.day = Time.now.day if self.day.nil?
+    self.month = Time.now.month if self.month.nil?
+    self.year = Time.now.year if self.year.nil?
     self.save!    
   end
 end
+# == Schema Information
+# Schema version: 20081021084157
+#
+# Table name: stats
+#
+#  id         :integer(4)      not null, primary key
+#  model_id   :integer(4)
+#  model_type :string(255)
+#  stat_type  :integer(4)      not null
+#  day        :integer(4)
+#  month      :integer(4)
+#  year       :integer(4)
+#  data       :text
+#  created_at :datetime
+#  updated_at :datetime

@@ -7,8 +7,9 @@ class StatTest < Test::Unit::TestCase
   end
   
   context "A Stat" do
-    setup do
-      @stat=Factory(:stat)
+    setup do                    
+      @art = Factory(:banner)
+      @stat = Factory(:stat, :model_id => @art.id)      
     end
 
     should "UnMarshal correctly the array" do

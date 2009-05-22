@@ -5,7 +5,23 @@ class BannerTest < Test::Unit::TestCase
   def setup
     setup_db
   end
-  
+       
+  context "A stats_for_all_client" do
+    setup do                    
+      @data=Array.new(24,0)
+      @art=Factory(:banner)
+      @stat1=Factory(:stat, :model_id => @art.id, :data => Marshal.dump(@data), :day=> Time.now.day, :month=> Time.now.month, :year => Time.now.year )     
+      3.times { @art.add_click } 
+      @art.add_hit    
+      @stat1.update_all_stats      
+      @art.reload
+    end
+ 
+   should "have the correct general stat" do 
+      assert_equal 3, @art.click_counter       
+    end  
+  end  
+    
   context "A stats_for_all_client" do
     setup do
       @data=Array.new(24,0)
@@ -24,18 +40,21 @@ class BannerTest < Test::Unit::TestCase
       assert @art.add_click
       assert @art.add_click
       assert_equal 4, @art.clicks.sum
-
+      
       assert_equal 24, @art.clicks(:day => Time.now.day, :month => Time.now.month, :year => Time.now.year).size
       assert_equal 4, @art.clicks(:day => Time.now.day, :month => Time.now.month, :year => Time.now.year).sum
 
       assert_equal Time.days_in_month(Time.now.month), @art.clicks(:month => Time.now.month, :year => Time.now.year).size
       assert_equal 4, @art.clicks( :month => Time.now.month, :year => Time.now.year).sum
 
+
       assert_equal 12, @art.clicks(:year => Time.now.year).size
       assert_equal 4, @art.clicks( :year => Time.now.year).sum      
       
-      assert_equal 12, @art.clicks.size      
+      assert_equal 12, @art.clicks.size       
+
     end
+    
     
     context "A banner with a day of stats" do
       setup do
@@ -124,7 +143,8 @@ class BannerTest < Test::Unit::TestCase
         assert_equal 50, @art.stat( :month=> Time.now.month, :year => Time.now.year, :type =>1)[Time.now.day-1]
         assert_equal 100, @art.stat( :month=> Time.now.month, :year => Time.now.year, :type =>1).sum
         assert_equal 100, @art.stat( :type =>1)[Time.now.month-1]
-      end
+      end                                                        
+      
     end
     
     should "work with the drb mode" do

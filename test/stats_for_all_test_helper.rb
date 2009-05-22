@@ -30,6 +30,7 @@ def setup_db
       t.date    "t_fin"
       t.string  "URL"
       t.string  "file"
+      t.integer "click_counter"
     end
     create_table "stats", :force => true do |t|
       t.integer  "model_id"
@@ -63,6 +64,7 @@ Factory.define :banner do |b|
   b.tipo "top-right"
   b.URL "http://localhost.com"
   b.file  "ban.gif"
+  b.click_counter 0
 end
 
 Factory.define :stat do |s|

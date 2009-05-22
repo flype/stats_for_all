@@ -1,4 +1,4 @@
-require 'drb'
+  require 'drb'
 module StatsForAll
   module Client
 
