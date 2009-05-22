@@ -111,18 +111,3 @@ class Stat < ActiveRecord::Base
     self.save!    
   end
 end
-# == Schema Information
-# Schema version: 20081021084157
-#
-# Table name: stats
-#
-#  id         :integer(4)      not null, primary key
-#  model_id   :integer(4)
-#  model_type :string(255)
-#  stat_type  :integer(4)      not null
-#  day        :integer(4)
-#  month      :integer(4)
-#  year       :integer(4)
-#  data       :text
-#  created_at :datetime
-#  updated_at :datetime
