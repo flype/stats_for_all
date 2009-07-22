@@ -2,11 +2,13 @@ require 'rubygems'
 require 'daemons'
 require 'active_record'
 require 'drb'
-require 'yaml'
+require 'yaml'                                                                 
 
 module StatsForAll
-  RAILS_ENV=ARGV.pop
+  RAILS_ENV = ARGV.pop
 end
+
+require File.expand_path(File.dirname(__FILE__) + "../../../../../../config/environment")
 
 ActiveRecord::Base.establish_connection(YAML.load_file(File.expand_path(File.dirname(__FILE__) + "../../../../../../config/database.yml"))[StatsForAll::RAILS_ENV])
 
@@ -17,9 +19,8 @@ options = {
   :dir_mode => :normal,
   :dir => 'log',
   :log_output => true,
-  :multiple => false,
+  :multiple => true,
   :backtrace => true,
-  :monitor => true
+  :monitor => false
 }
 Daemons.run(stats_for_all, options)
-

@@ -64,8 +64,8 @@ class BannerTest < Test::Unit::TestCase
           @data[@day]=10
           @day+=1
         end
-        @art=Factory(:banner)
-        @stat1=Factory(:stat, :model_id => @art.id, :data => Marshal.dump(@data), :day=> Time.now.day, :month=> Time.now.month, :year => Time.now.year )
+        @art = Factory(:banner)
+        @stat1 = Factory(:stat, :model_id => @art.id, :data => Marshal.dump(@data), :day=> Time.now.day, :month=> Time.now.month, :year => Time.now.year )
         @stat1.update_all_stats
       end
 

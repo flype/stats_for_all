@@ -1,14 +1,14 @@
 class StatsForAllServer
   def initialize
     @@object_pool = {}
-    @@processing=false
+    @@processing = false
     @mutex = Mutex.new     
   end
 
   def increment(stat_id, hour=Time.now.hour)
     while @@processing; end
     @mutex.synchronize do
-      @@object_pool[stat_id]= Array.new(24,0) unless @@object_pool.include?(stat_id)
+      @@object_pool[stat_id] = Array.new(24,0) unless @@object_pool.include?(stat_id)
       @@object_pool[stat_id][hour] += 1
     end
   end
@@ -20,25 +20,33 @@ class StatsForAllServer
     end
   end
 
-  def save_all
+  def save_all                 
     log_dump              
     @@object_pool.each do |key, value|
-      @@object_pool.delete(key) if stat=Stat.find(key) 
-      stat.data=Marshal.dump(value.add(stat.to_a))
-      stat.save
-      stat.update_all_stats
+      begin
+        @@object_pool.delete(key) if stat = Stat.find(key) 
+        stat.data = Marshal.dump(value.add(stat.to_a))
+        stat.save
+        stat.update_all_stats
+      rescue ActiveRecord::RecordNotFound
+         p "The stat id => (key) can't be found"
+      end
     end
   end
   
   def final_save_all
-    @@processing=true    
+    @@processing = true    
     save_all
-    @@processing=false
+    @@processing = false
+  end      
+  
+  def connected?
+    true
   end
 
   private
   def log_dump
-    puts "#{Time.now} - Dumping all data to the db."
+    puts "#{Time.now} - Dumping all data to the db (#{@@object_pool.size})."
     # puts @@object_pool.to_yaml
     # puts @@object_pool.empty?
   end
