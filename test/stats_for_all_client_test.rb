@@ -1,4 +1,5 @@
 require File.expand_path(File.dirname(__FILE__) + '/stats_for_all_test_helper') 
+require 'ruby-debug'
 
 class BannerTest < Test::Unit::TestCase  
   def setup
@@ -19,6 +20,10 @@ class BannerTest < Test::Unit::TestCase
    should "have the correct general stat" do 
       assert_equal 3, @art.click_counter       
     end  
+    
+    should "have denfined correctly the relation" do
+      assert_equal Banner, @stat1.model.class
+    end
   end  
     
   context "A stats_for_all_client" do
@@ -46,12 +51,10 @@ class BannerTest < Test::Unit::TestCase
       assert_equal Time.days_in_month(Time.now.month), @art.clicks(:month => Time.now.month, :year => Time.now.year).size
       assert_equal 4, @art.clicks( :month => Time.now.month, :year => Time.now.year).sum
 
-
       assert_equal 12, @art.clicks(:year => Time.now.year).size
       assert_equal 4, @art.clicks( :year => Time.now.year).sum      
       
-      assert_equal 12, @art.clicks.size       
-
+      assert_equal 12, @art.clicks.size
     end
     
     
@@ -92,7 +95,7 @@ class BannerTest < Test::Unit::TestCase
         @art2_result = [{:type=>["hit"], :day=>Time.now.day, :month=>Time.now.month, :year=>Time.now.year}]
         @art2.stats.first.update_all_stats
         
-        StatsForAll::CONFIGURATION["increment_type"]="direct"
+        StatsForAll::CONFIGURATION["increment_type"] = "direct"
       end
 
       should "have the correct available months, days and years in the correct format" do

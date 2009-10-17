@@ -14,14 +14,9 @@
 #  created_at :datetime
 #  updated_at :datetime
 #
-
 class Stat < ActiveRecord::Base
   TYPE = StatsForAll::CONFIGURATION["types"]
-  
-  StatsForAll::CONFIGURATION["model"].each do | model |
-    self.class_eval("belongs_to :#{model.downcase.singularize} , :polymorphic => true")
-  end
-      
+
   named_scope :is_like, lambda { |*args| {:conditions => { :stat_type => args.first.stat_type, 
                                                            :model_type => args.first.model_type,
                                                            :model_id => args.first.model_id } } }

@@ -1,8 +1,8 @@
 require 'rubygems'
-require 'daemons'
 require 'active_record'
 require 'drb'
 require 'yaml'                                                                 
+require 'daemons'
 
 module StatsForAll
   RAILS_ENV = ARGV.pop

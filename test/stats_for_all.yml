@@ -1,6 +1,4 @@
 all:
-  model: [ banner ]
-  
   types: { click: 0, hit: 1 }
   
   # require for increment_type: drb and starling only

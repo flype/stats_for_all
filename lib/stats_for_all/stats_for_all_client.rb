@@ -1,4 +1,6 @@
 require 'drb'
+require 'ruby-debug'
+
 module StatsForAll
   module Client
 
@@ -7,9 +9,11 @@ module StatsForAll
     end 
 
     module ClassMethods 
-      def stats_for_me(options={})
+      def stats_for_me(types = {})
         has_many :stats, :dependent => :destroy, :as => :model
-
+                
+        Stat.class_eval("belongs_to :#{self.class.name.downcase.singularize} , :polymorphic => true")
+        
         include StatsForAll::Client::InstanceMethods 
       end
     end
@@ -17,9 +21,9 @@ module StatsForAll
     module InstanceMethods 
 
       # Cool syntax stats retrieve supported!, like:
-      # @object.stat :type=> Stat::TYPE[:click], :day => 21..24, :month =>10..12, :year => 2007..2009
-      # @object.stat :type=> Stat::TYPE[:click], :day => 21, :month =>10, :year => 2008
-      # @object.stat :type=> Stat::TYPE[:click], :month =>10, :year => 2008
+      # @object.stat :type=> Stat::TYPE[:click], :day => 21..24, :month => 10..12, :year => 2007..2009
+      # @object.stat :type=> Stat::TYPE[:click], :day => 21, :month => 10, :year => 2008
+      # @object.stat :type=> Stat::TYPE[:click], :month => 10, :year => 2008
       # @object.stat :type=> Stat::TYPE[:click], :year => 2008
 
       def stat(arg={})
@@ -35,7 +39,7 @@ module StatsForAll
       def save_stats(type, hour=Time.now.hour)
         case StatsForAll::CONFIGURATION["increment_type"]
         when "direct"
-         direct_save(type, hour)
+          direct_save(type, hour)
         when "starling"
           starling_save(type, hour)
         when "drb"
@@ -199,7 +203,7 @@ module StatsForAll
         DRb.stop_service
         value
       end
-      
+
       def get_stats_server_connection
         stats_server = DRbObject.new(nil, "druby://#{StatsForAll::CONFIGURATION["server_host"]}:#{StatsForAll::CONFIGURATION["server_port"]}")  
         begin                                                      
@@ -210,7 +214,7 @@ module StatsForAll
           get_stats_server_connection
         end        
       end
-      
-    end
+
+    end    
   end    
 end

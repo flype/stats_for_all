@@ -1,9 +1,8 @@
 require 'rubygems'
-require 'active_record'
 require 'yaml'
+require 'active_record'
 require 'drb'
 require File.expand_path(File.dirname(__FILE__) + '/stats_for_all')
-
 
 class StatsForAllRunner
   def start

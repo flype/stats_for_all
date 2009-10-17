@@ -1,7 +1,5 @@
-all:
-  model: [ ] # example: [ banner, photo, car ]
-  
-  types: { click: 0, hit: 1}
+all:  
+  types: { click: 0, hit: 1 }
   
   # no need if you work in "direct mode" only  
   server_host: localhost
