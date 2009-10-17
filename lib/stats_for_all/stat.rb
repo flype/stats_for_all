@@ -1,4 +1,4 @@
-  # == Schema Information
+# == Schema Information
 # Schema version: 20081021084157
 #
 # Table name: stats

@@ -1,5 +1,4 @@
 require 'test/unit'
-require 'yaml'
 require 'rubygems'
 require 'daemons'
 require 'active_record'
@@ -9,15 +8,14 @@ require 'shoulda/rails'
 require 'factory_girl'
 
 module StatsForAll
-  RAILS_ENV='test'
+  RAILS_ENV = 'test'
 end
 
-require 'stats_for_all'
+require File.expand_path(File.dirname(__FILE__) + '/../lib/stats_for_all') 
 
-ActiveRecord::Base.establish_connection(YAML.load_file(File.expand_path(File.dirname(__FILE__) + "../../../../../config/database.yml"))[StatsForAll::RAILS_ENV])
+ActiveRecord::Base.establish_connection(YAML.load_file(File.expand_path(File.dirname(__FILE__) + "/database.yml"))[StatsForAll::RAILS_ENV]) 
 
 ActiveRecord::Base.send(:include, StatsForAll::Client)
-
 
 def setup_db
   ActiveRecord::Schema.define(:version => 1) do

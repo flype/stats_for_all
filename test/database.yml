@@ -1,0 +1,6 @@
+test:
+  adapter: mysql
+  database: stats_for_all_test
+  username: root
+  password: 
+  host: localhost

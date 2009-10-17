@@ -4,7 +4,7 @@ require 'drb'
 namespace :stats_for_all do
   desc "start the stats_for_all server"
   task :start do      
-    system "ruby #{RAILS_ROOT}/vendor/plugins/stats_for_all/lib/stats_for_all/stats_for_all_server_demonized.rb start #{RAILS_ENV}"
+    system "ruby #{RAILS_ROOT}/vendor/plugins/stats_for_all/lib/stats_for_all/stats_for_all_server_demonized.rb start #{Rails.env}"
     puts "[STATS_FOR_ALL] Running"
   end
 
@@ -24,12 +24,12 @@ namespace :stats_for_all do
     end
     DRb.stop_service
 
-    system "ruby #{RAILS_ROOT}/vendor/plugins/stats_for_all/lib/stats_for_all/stats_for_all_server_demonized.rb stop #{RAILS_ENV}"
+    system "ruby #{RAILS_ROOT}/vendor/plugins/stats_for_all/lib/stats_for_all/stats_for_all_server_demonized.rb stop #{Rails.env}"
   end
 
   desc "Run in foreground the stats_for_all server"
   task :run do      
-    system "ruby #{RAILS_ROOT}/vendor/plugins/stats_for_all/lib/stats_for_all/stats_for_all_server_demonized.rb run #{RAILS_ENV}"
+    system "ruby #{RAILS_ROOT}/vendor/plugins/stats_for_all/lib/stats_for_all/stats_for_all_server_demonized.rb run #{Rails.env}"
   end
 
   desc "restart the stats_for_all server"

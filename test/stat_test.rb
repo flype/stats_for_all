@@ -15,30 +15,19 @@ class StatTest < Test::Unit::TestCase
     should "UnMarshal correctly the array" do
       assert_equal Array.new(24,0), @stat.to_a
     end
-    
-    should_belong_to :banner
-    
-    should_have_named_scope 'is_like(@stat)'
-    should_have_named_scope :stats_type
-    should_have_named_scope :today
-    should_have_named_scope :day
-    should_have_named_scope :month
-    should_have_named_scope :year
-    should_have_named_scope :month_only
-    should_have_named_scope :year_only
   end
       
   context "some Stat" do
     setup do
-      @data=Array.new(24,0)
-      day=4
+      @data = Array.new(24,0)
+      day = 4
       5.times do
-        @data[day]=10
-        day+=1
+        @data[day] = 10
+        day += 1
       end
-      @art=Factory(:banner)
-      @stat1=Factory(:stat, :model_id => @art.id, :data => Marshal.dump(@data), :day=> Time.now.day, :month=> Time.now.month, :year => Time.now.year )
-      @stat2=Factory(:stat, :model_id => @art.id, :data => Marshal.dump(@data), :day=> (Time.now.day+1), :month=> Time.now.month, :year => Time.now.year )
+      @art = Factory(:banner)
+      @stat1 = Factory(:stat, :model_id => @art.id, :data => Marshal.dump(@data), :day=> Time.now.day, :month=> Time.now.month, :year => Time.now.year )
+      @stat2 = Factory(:stat, :model_id => @art.id, :data => Marshal.dump(@data), :day=> (Time.now.day+1), :month=> Time.now.month, :year => Time.now.year )
     end
 
     should "prepare correctly the daily and monthly stat" do
@@ -55,15 +44,15 @@ class StatTest < Test::Unit::TestCase
 
   context "Some stats" do
     setup do
-      @data=Array.new(24,0)
-      day=4
+      @data = Array.new(24,0)
+      day = 4
       5.times do
-        @data[day]=10
-        day+=1
+        @data[day]= 10
+        day += 1
       end
-      @art=Factory(:banner)
-      @stat1=Factory(:stat, :model_id => @art.id, :data => Marshal.dump(@data), :day=> Time.now.day,:month=> Time.now.month, :year => Time.now.year )
-      @stat2=Factory(:stat, :model_id => @art.id, :data => Marshal.dump(@data), :day=> (Time.now.day - 1 ), :month=> Time.now.month, :year => Time.now.year   )      
+      @art = Factory(:banner)
+      @stat1 = Factory(:stat, :model_id => @art.id, :data => Marshal.dump(@data), :day=> Time.now.day,:month=> Time.now.month, :year => Time.now.year )
+      @stat2 = Factory(:stat, :model_id => @art.id, :data => Marshal.dump(@data), :day=> (Time.now.day - 1 ), :month=> Time.now.month, :year => Time.now.year   )      
     end
 
     should "update the days and month array" do

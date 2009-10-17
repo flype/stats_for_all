@@ -15,11 +15,6 @@ class CreateStatsForAll < ActiveRecord::Migration
   end
 
   def self.down
-    # remove_index :stats,  :name =>"idx_stats_day"
-    # remove_index :stats,  :name =>"idx_stats_month"
-    # remove_index :stats,  :name =>"idx_stats_year"
-    # remove_index :stats,  :name =>"idx_stats_stat_type"
-    
     drop_table :stats
   end
 end

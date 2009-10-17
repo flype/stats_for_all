@@ -1,16 +1,15 @@
 require File.expand_path(File.dirname(__FILE__) + '/stats_for_all_test_helper') 
 
-class BannerTest < Test::Unit::TestCase
-  
+class BannerTest < Test::Unit::TestCase  
   def setup
     setup_db
   end
        
   context "A stats_for_all_client" do
     setup do                    
-      @data=Array.new(24,0)
-      @art=Factory(:banner)
-      @stat1=Factory(:stat, :model_id => @art.id, :data => Marshal.dump(@data), :day=> Time.now.day, :month=> Time.now.month, :year => Time.now.year )     
+      @data = Array.new(24,0)
+      @art = Factory(:banner)
+      @stat1 = Factory(:stat, :model_id => @art.id, :data => Marshal.dump(@data), :day=> Time.now.day, :month=> Time.now.month, :year => Time.now.year )     
       3.times { @art.add_click } 
       @art.add_hit    
       @stat1.update_all_stats      
@@ -24,9 +23,9 @@ class BannerTest < Test::Unit::TestCase
     
   context "A stats_for_all_client" do
     setup do
-      @data=Array.new(24,0)
-      @art=Factory(:banner)
-      @stat1=Factory(:stat, :model_id => @art.id, :data => Marshal.dump(@data), :day=> Time.now.day, :month=> Time.now.month, :year => Time.now.year )
+      @data = Array.new(24,0)
+      @art = Factory(:banner)
+      @stat1 = Factory(:stat, :model_id => @art.id, :data => Marshal.dump(@data), :day=> Time.now.day, :month=> Time.now.month, :year => Time.now.year )
     end
 
     should_have_many :stats
@@ -58,11 +57,11 @@ class BannerTest < Test::Unit::TestCase
     
     context "A banner with a day of stats" do
       setup do
-        @data=Array.new(24,0)
-        @day=4
+        @data = Array.new(24,0)
+        @day = 4
         5.times do
-          @data[@day]=10
-          @day+=1
+          @data[@day] = 10
+          @day += 1
         end
         @art = Factory(:banner)
         @stat1 = Factory(:stat, :model_id => @art.id, :data => Marshal.dump(@data), :day=> Time.now.day, :month=> Time.now.month, :year => Time.now.year )
@@ -82,19 +81,18 @@ class BannerTest < Test::Unit::TestCase
     
     context "A banner" do
       setup do
-        @art1=Factory(:banner)
+        @art1 = Factory(:banner)
         @art1.add_click
         @art1.add_hit
                 
         # @art1.stats.each {|a| a.update_all_stats }
         
-        @art2=Factory(:banner)               
+        @art2 = Factory(:banner)               
         @art2.add_hit
-        @art2_result=[{:type=>["hit"], :day=>Time.now.day, :month=>Time.now.month, :year=>Time.now.year}]
+        @art2_result = [{:type=>["hit"], :day=>Time.now.day, :month=>Time.now.month, :year=>Time.now.year}]
         @art2.stats.first.update_all_stats
         
         StatsForAll::CONFIGURATION["increment_type"]="direct"
-
       end
 
       should "have the correct available months, days and years in the correct format" do
@@ -122,16 +120,16 @@ class BannerTest < Test::Unit::TestCase
 
     context "A banner with some days of stats" do
       setup do
-        @data=Array.new(24,0)
-        @day=4
+        @data = Array.new(24,0)
+        @day = 4
         5.times do
           @data[@day]=10
           @day+=1
         end
-        @art=Factory(:banner)
-        @stat1=Factory(:stat, :model_id => @art.id, :data => Marshal.dump(@data), :day=> Time.now.day, :month=> Time.now.month, :year => Time.now.year )
+        @art = Factory(:banner)
+        @stat1 = Factory(:stat, :model_id => @art.id, :data => Marshal.dump(@data), :day=> Time.now.day, :month=> Time.now.month, :year => Time.now.year )
         @stat1.update_all_stats
-        @stat2=Factory(:stat, :model_id => @art.id, :data => Marshal.dump(@data), :day=> (Time.now.day+1), :month=> Time.now.month, :year => Time.now.year )
+        @stat2 = Factory(:stat, :model_id => @art.id, :data => Marshal.dump(@data), :day=> (Time.now.day+1), :month=> Time.now.month, :year => Time.now.year )
         @stat2.update_all_stats
       end
 
@@ -148,11 +146,11 @@ class BannerTest < Test::Unit::TestCase
     end
     
     should "work with the drb mode" do
-      StatsForAll::CONFIGURATION["increment_type"]="drb"
+      StatsForAll::CONFIGURATION["increment_type"] = "drb"
       assert_equal "drb", StatsForAll::CONFIGURATION["increment_type"]
 
-      assert system("cd ../../../; export RAILS_ENV='test'; rake stats_for_all:start; cd vendor/plugins/stats_for_all")
-
+      system("ruby #{File.expand_path(File.dirname(__FILE__) + '/../lib/stats_for_all_server_demonized.rb')} start test")
+      
       assert @art.add_hit
       
       sleep (StatsForAll::CONFIGURATION["dump_frequency_in_seconds"] + 2)
@@ -175,45 +173,8 @@ class BannerTest < Test::Unit::TestCase
       assert_equal 12, @art.hits(:year => Time.now.year).size
       assert_equal 4, @art.hits( :year => Time.now.year).sum      
       
-      assert system("cd ../../../; export RAILS_ENV='test'; rake stats_for_all:stop ; cd vendor/plugins/stats_for_all")
+      system("ruby #{File.expand_path(File.dirname(__FILE__) + '/../lib/stats_for_all_server_demonized.rb')} stop test")
     end
-    
-    # this test is prepared for the future  simplified_starling gem
-    # should "work with the starling mode" do
-    #   StatsForAll::CONFIGURATION["increment_type"]="starling"
-    #     assert_equal "starling", StatsForAll::CONFIGURATION["increment_type"]
-    #         
-    #     assert system("cd ../../../; export RAILS_ENV='test'; rake simplified_starling:start_and_process_jobs; cd vendor/plugins/stats_for_all")
-    #     assert system("cd ../../../; export RAILS_ENV='test'; rake stats_for_all:start; cd vendor/plugins/stats_for_all")
-    #         
-    #     assert @art.add_hit
-    #     
-    #     sleep (StatsForAll::CONFIGURATION["dump_frequency_in_seconds"] + 2)
-    #         
-    #     assert_equal 1, @art.hits.sum
-    #     assert @art.add_hit
-    #     assert @art.add_hit
-    #     assert @art.add_hit
-    #     
-    #     sleep (StatsForAll::CONFIGURATION["dump_frequency_in_seconds"] + 2)
-    #     
-    #     assert_equal 4, @art.hits.sum
-    #         
-    #     assert_equal 24, @art.hits(:day => Time.now.day, :month => Time.now.month, :year => Time.now.year).size
-    #     assert_equal 4, @art.hits(:day => Time.now.day, :month => Time.now.month, :year => Time.now.year).sum
-    #         
-    #     assert_equal 31, @art.hits(:month => Time.now.month, :year => Time.now.year).size
-    #     assert_equal 4, @art.hits( :month => Time.now.month, :year => Time.now.year).sum
-    #         
-    #     assert_equal 12, @art.hits(:year => Time.now.year).size
-    #     assert_equal 4, @art.hits( :year => Time.now.year).sum      
-    #   
-    #   assert system("cd ../../../; export RAILS_ENV='test'; rake simplified_starling:stop_processing_jobs  ; cd vendor/plugins/stats_for_all")      
-    #   assert system("cd ../../../; export RAILS_ENV='test'; rake stats_for_all:stop ; cd vendor/plugins/stats_for_all")
-    #   assert system("cd ../../../; export RAILS_ENV='test'; rake simplified_starling:stop  ; cd vendor/plugins/stats_for_all")      
-    # end
-
-    
   end
 end
 teardown_db
