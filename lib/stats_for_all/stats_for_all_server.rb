@@ -8,7 +8,7 @@ class StatsForAllServer
   def increment(stat_id, hour=Time.now.hour)
     while @@processing; end
     @mutex.synchronize do
-      @@object_pool[stat_id] = Array.new(24,0) unless @@object_pool.include?(stat_id)
+      @@object_pool[stat_id] = Array.new(24, 0) unless @@object_pool.include?(stat_id)
       @@object_pool[stat_id][hour] += 1
     end
   end

@@ -8,7 +8,7 @@ class BannerTest < Test::Unit::TestCase
        
   context "A stats_for_all_client" do
     setup do                    
-      @data = Array.new(24,0)
+      @data = Array.new(24, 0)
       @art = Factory(:banner)
       @stat1 = Factory(:stat, :model_id => @art.id, :data => Marshal.dump(@data), :day=> Time.now.day, :month=> Time.now.month, :year => Time.now.year )     
       3.times { @art.add_click } 
@@ -18,7 +18,7 @@ class BannerTest < Test::Unit::TestCase
     end
  
    should "have the correct general stat" do 
-      assert_equal 3, @art.click_counter       
+      assert_equal 3, @art.click_counter
     end  
     
     should "have denfined correctly the relation" do
@@ -28,13 +28,13 @@ class BannerTest < Test::Unit::TestCase
     
   context "A stats_for_all_client" do
     setup do
-      @data = Array.new(24,0)
+      @data = Array.new(24, 0)
       @art = Factory(:banner)
       @stat1 = Factory(:stat, :model_id => @art.id, :data => Marshal.dump(@data), :day=> Time.now.day, :month=> Time.now.month, :year => Time.now.year )
     end
 
     should_have_many :stats
-    should_have_instance_methods  :add_click, :add_hit, :hits, :clicks, :save_stats, :stat
+    should_have_instance_methods :save_stats, :stat
     
     should "work with the direct mode" do
       assert_equal "direct", StatsForAll::CONFIGURATION["increment_type"]
@@ -60,7 +60,7 @@ class BannerTest < Test::Unit::TestCase
     
     context "A banner with a day of stats" do
       setup do
-        @data = Array.new(24,0)
+        @data = Array.new(24, 0)
         @day = 4
         5.times do
           @data[@day] = 10
@@ -123,11 +123,11 @@ class BannerTest < Test::Unit::TestCase
 
     context "A banner with some days of stats" do
       setup do
-        @data = Array.new(24,0)
+        @data = Array.new(24, 0)
         @day = 4
         5.times do
-          @data[@day]=10
-          @day+=1
+          @data[@day] = 10
+          @day += 1
         end
         @art = Factory(:banner)
         @stat1 = Factory(:stat, :model_id => @art.id, :data => Marshal.dump(@data), :day=> Time.now.day, :month=> Time.now.month, :year => Time.now.year )
@@ -151,13 +151,13 @@ class BannerTest < Test::Unit::TestCase
     should "work with the drb mode" do
       StatsForAll::CONFIGURATION["increment_type"] = "drb"
       assert_equal "drb", StatsForAll::CONFIGURATION["increment_type"]
-
+    
       system("ruby #{File.expand_path(File.dirname(__FILE__) + '/../lib/stats_for_all_server_demonized.rb')} start test")
       
       assert @art.add_hit
       
       sleep (StatsForAll::CONFIGURATION["dump_frequency_in_seconds"] + 2)
-
+    
       assert_equal 1, @art.hits.sum
       assert @art.add_hit
       assert @art.add_hit
@@ -166,13 +166,13 @@ class BannerTest < Test::Unit::TestCase
       sleep (StatsForAll::CONFIGURATION["dump_frequency_in_seconds"] + 2)
       
       assert_equal 4, @art.hits.sum
-
+    
       assert_equal 24, @art.hits(:day => Time.now.day, :month => Time.now.month, :year => Time.now.year).size
       assert_equal 4, @art.hits(:day => Time.now.day, :month => Time.now.month, :year => Time.now.year).sum
-
+    
       assert_equal Time.days_in_month(Time.now.month), @art.hits(:month => Time.now.month, :year => Time.now.year).size
       assert_equal 4, @art.hits( :month => Time.now.month, :year => Time.now.year).sum
-
+    
       assert_equal 12, @art.hits(:year => Time.now.year).size
       assert_equal 4, @art.hits( :year => Time.now.year).sum      
       

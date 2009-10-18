@@ -15,15 +15,13 @@
 #  updated_at :datetime
 #
 class Stat < ActiveRecord::Base
-  TYPE = StatsForAll::CONFIGURATION["types"]
-
   named_scope :is_like, lambda { |*args| {:conditions => { :stat_type => args.first.stat_type, 
                                                            :model_type => args.first.model_type,
                                                            :model_id => args.first.model_id } } }
 
   named_scope :stats_type, lambda { |*args| {:conditions => {:stat_type => args.first } } } 
   
-  named_scope :type_only, lambda { |*args| {:conditions => { :stat_type => StatsForAll::CONFIGURATION["types"].values_at(args.first).first } } } 
+  named_scope :type_only, lambda { |*args| {:conditions => { :stat_type => StatsForAll.type(args.first) } } } 
     
   named_scope :today, :conditions => { :day => Time.now.day,
                                        :month => Time.now.month,
@@ -49,7 +47,7 @@ class Stat < ActiveRecord::Base
   end
   
   def type
-    StatsForAll::CONFIGURATION["types"].index(self.stat_type)
+    StatsForAll.type(self.stat_type)
   end
     
   def model
@@ -89,9 +87,8 @@ class Stat < ActiveRecord::Base
   after_save :update_counters
   
   protected        
-  def update_counters                    
-    # hack hack hack hack we need to change the way to configure the plugin
-    type_name = StatsForAll::CONFIGURATION["types"].keys.reverse[self.stat_type.to_i]
+  def update_counters
+    type_name = StatsForAll.type(self.stat_type)
     if model.attribute_present?("#{type_name}_counter")                       
       all_stat = Stat.is_like(self).years_only.map(&:to_a).map(&:sum).sum
       model.update_attribute("#{type_name}_counter", all_stat)
@@ -99,10 +96,10 @@ class Stat < ActiveRecord::Base
   end
   
   def initializer
-    self.data = Marshal.dump(Array.new(24,0)) if self.data.nil?
-    self.day = Time.now.day if self.day.nil?
-    self.month = Time.now.month if self.month.nil?
-    self.year = Time.now.year if self.year.nil?
+    self.data   = Marshal.dump(Array.new(24,0))   if self.data.nil?
+    self.day    = Time.now.day    if self.day.nil?
+    self.month  = Time.now.month  if self.month.nil?
+    self.year   = Time.now.year   if self.year.nil?
     self.save!    
   end
 end

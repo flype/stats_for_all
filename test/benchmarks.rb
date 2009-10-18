@@ -18,7 +18,7 @@ setup_db
 
 Benchmark.bm(15) do |x|
   modes.each do | mode |
-    StatsForAll::CONFIGURATION["increment_type"]=mode
+    StatsForAll::CONFIGURATION["increment_type"] = mode
     times.each do |n|
       sleep 4 unless mode == "direct"
       x.report("#{mode}-#{n}") do

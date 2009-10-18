@@ -23,6 +23,4 @@ class Array
     end
     final_array
   end
-
-
 end

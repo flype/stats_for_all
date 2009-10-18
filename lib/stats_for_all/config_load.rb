@@ -12,7 +12,20 @@ module StatsForAll
       CONFIGURATION.merge!(YAML.load(File.read(app_config_file))["all"] || {}) 
       CONFIGURATION.merge!(YAML.load(File.read(app_config_file))[RAILS_ENV || "test"] || {})
     end
-    
+
+    StatsForAll::CONFIGURATION["types"] ||= {}
+  end
+  
+  def self.type(value)
+    CONFIGURATION["types"].index(value)
+  end
+  
+  def self.value(type)
+    CONFIGURATION["types"].values_at(type).first
+  end  
+  
+  def self.stat_type_storing_conversion(type)
+    type.to_s
   end
 end
 

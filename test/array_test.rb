@@ -42,5 +42,4 @@ class ArrayTest < Test::Unit::TestCase
     assert_equal a.group_by_types, b
     
   end
-
 end

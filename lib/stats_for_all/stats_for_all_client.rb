@@ -1,5 +1,4 @@
 require 'drb'
-require 'ruby-debug'
 
 module StatsForAll
   module Client
@@ -9,16 +8,35 @@ module StatsForAll
     end 
 
     module ClassMethods 
-      def stats_for_me(types = {})
+      def stats_for_me(*types)
         has_many :stats, :dependent => :destroy, :as => :model
-                
+
+        types.each do |type|
+          StatsForAll::CONFIGURATION["types"][type.to_s] ||= StatsForAll.stat_type_storing_conversion(type)
+        end
+
         Stat.class_eval("belongs_to :#{self.class.name.downcase.singularize} , :polymorphic => true")
-        
+
         include StatsForAll::Client::InstanceMethods 
       end
     end
 
     module InstanceMethods 
+      
+      def method_missing( name, *args, &block)
+        StatsForAll::CONFIGURATION["types"].each do |type, value|
+          if name.to_s =~ /add_#{type}/            
+            return self.save_stats(value)
+          elsif name.to_s =~ /#{type.to_s.pluralize}/
+            args = args.first
+            args ||= {} 
+            raise(ArgumentError, "wrong number of arguments 3 is the maximum.") if args.size > 3
+            args.merge! :type => value
+            return self.stat( args )
+          end
+        end
+        super
+      end
 
       # Cool syntax stats retrieve supported!, like:
       # @object.stat :type=> Stat::TYPE[:click], :day => 21..24, :month => 10..12, :year => 2007..2009
@@ -26,7 +44,7 @@ module StatsForAll
       # @object.stat :type=> Stat::TYPE[:click], :month => 10, :year => 2008
       # @object.stat :type=> Stat::TYPE[:click], :year => 2008
 
-      def stat(arg={})
+      def stat(arg = {})
         raise(ArgumentError, "type is a mandatory argument") unless arg[:type]          
         stats_array = stats.day(arg[:day]).month(arg[:month]).year(arg[:year]).stats_type(arg[:type]).map { |stat| stat.to_a }
         stats_array.size > 1 ? stats_array : stats_array.flatten
@@ -36,7 +54,7 @@ module StatsForAll
       # dispatcher to increment the stats, will call the method defined in the configuration file, 
       # you can use it directly with the type or use one of the wrapper defined 
 
-      def save_stats(type, hour=Time.now.hour)
+      def save_stats(type, hour = Time.now.hour)
         case StatsForAll::CONFIGURATION["increment_type"]
         when "direct"
           direct_save(type, hour)
@@ -49,38 +67,18 @@ module StatsForAll
         end
       end
 
-      # With this metaprogram piece of code. We generate two methods for each type defined in the configuration file,
-      # they are wrapper for the "stat" and "save_stat" methods containing itself the type in the call.
-      # for example: with the type defined like [click: 0] the code will generate the "clicks" method to get the clicks and "add_click" to incremente de stats.
-
-      StatsForAll::CONFIGURATION["types"].each do |type, value|
-
-        define_method( :"#{type.pluralize}") do |*args|
-          args = args.first
-          args ||= {} 
-          raise(ArgumentError, "wrong number of arguments 3 is the maximum.") if args.size > 3
-          args.merge! :type => value
-          self.stat( args )
-        end 
-
-        define_method(:"add_#{type}") do
-          self.save_stats(value)
-        end         
-
-      end
-
       # @bject.multi_stats(:year => 2008, :month => 10, :day => 29, :type => ["hit", "click"])
       # or @object.multi_stats(@object.available_days.group_by_types[0])
       # => {"hit"=>[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0],
       #     "click"=>[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0]}
 
-      def multi_stats(arg={})
+      def multi_stats(arg = {})
         raise(ArgumentError, "wrong number of arguments 1 is the minimun.") if arg.size == 0
         raise(ArgumentError, ":type must be an array of types") unless arg[:type]
         arg.to_yaml
         stats_hash = {}
         arg[:type].each do |type|
-          my_stats = stats.day(arg[:day]).month(arg[:month]).year(arg[:year]).stats_type(StatsForAll::CONFIGURATION["types"][type])
+          my_stats = stats.day(arg[:day]).month(arg[:month]).year(arg[:year]).type_only(type)
           stats_hash.merge!(Hash[type, []]) if my_stats.instance_of?(Array)
           my_stats.each do |stat| 
             stats_hash.merge!(Hash[type, stat.to_a])
@@ -107,7 +105,7 @@ module StatsForAll
       # ":month => 10, :year => 2008" to specify directly more concrects dates
       # @object.available_days :group => true, :direct => true, :month => 10, :year => 2008
 
-      def available_days(arg={})
+      def available_days(arg = {})
         st = arg[:type] ? stats.days_only.type_only(arg[:type]) : stats.days_only
         st = st.year(arg[:year]) if arg[:year]
         st = st.month(arg[:month]) if arg[:month]
@@ -132,7 +130,7 @@ module StatsForAll
       # ":year => 2008" to specify directly more concrects dates
       # @object.available_days :group => true, :direct => true, :year => 2008
 
-      def available_months(arg={})
+      def available_months(arg = {})
         st = arg[:type] ? stats.months_only.type_only(arg[:type]) : stats.months_only
         st = st.year(arg[:year]) if arg[:year]
         prepare_stat_data(st, arg)
@@ -155,7 +153,7 @@ module StatsForAll
       # ":direct => true" to get directly the data stats arrays
       # @object.available_days :group => true, :direct => true
 
-      def available_years(arg={})
+      def available_years(arg = {})
         st = arg[:type] ? stats.years_only.type_only(arg[:type]) : stats.years_only
         prepare_stat_data(st, arg)
       end

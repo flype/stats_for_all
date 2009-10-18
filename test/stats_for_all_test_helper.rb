@@ -34,7 +34,7 @@ def setup_db
     create_table "stats", :force => true do |t|
       t.integer  "model_id"
       t.string   "model_type"
-      t.integer  "stat_type",  :null => false
+      t.string  "stat_type",  :null => false
       t.integer  "day"
       t.integer  "month"
       t.integer  "year"
@@ -54,7 +54,7 @@ def teardown_db
 end
 
 class Banner < ActiveRecord::Base
-  stats_for_me click: 3, a: 0, hit: 1, 
+  stats_for_me :click, :hit
 end
 
 Factory.define :banner do |b|
